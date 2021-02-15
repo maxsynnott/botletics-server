@@ -1,16 +1,20 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+export enum ThirdPartyProvider {
+	GOOGLE = 'google',
+}
+
 @Entity()
 export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
 
 	@Column()
-	firstName: string;
+	email: string;
 
 	@Column()
-	lastName: string;
+	thirdPartyId: string;
 
 	@Column()
-	age: number;
+	thirdPartyProvider: ThirdPartyProvider;
 }
