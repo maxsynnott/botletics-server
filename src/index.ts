@@ -36,7 +36,7 @@ createConnection()
 		// ...
 
 		// start express server
-		app.listen(3000);
+		app.listen(8080);
 
 		// insert new users for test
 		// await connection.manager.save(
