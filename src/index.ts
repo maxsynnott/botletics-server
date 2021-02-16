@@ -8,54 +8,35 @@ import * as bodyParser from 'body-parser';
 import { Request, Response } from 'express';
 import routes from './routes';
 import { ThirdPartyProvider, User } from './entity/User';
+import * as cors from 'cors';
 const cookieSession = require('cookie-session');
+const cookieParser = require('cookie-parser');
 
 createConnection()
 	.then(async (connection) => {
 		// create express app
 		const app = express();
 		app.use(bodyParser.json());
-
-		// register express routes from defined application routes
-		routes.forEach((route) => {
-			(app as any)[route.method](
-				route.route,
-				(req: Request, res: Response, next: Function) => {
-					const result = new (route.controller as any)()[
-						route.action
-					](req, res, next);
-					if (result instanceof Promise) {
-						result.then((result) =>
-							result !== null && result !== undefined
-								? res.send(result)
-								: undefined,
-						);
-					} else if (result !== null && result !== undefined) {
-						res.json(result);
-					}
-				},
-			);
-		});
-
-		// setup express app here
-		// ...
+		app.use(
+			cors({
+				origin: 'http://localhost:3000',
+				credentials: true,
+			}),
+		);
+		app.use(cookieParser());
 
 		// Temp Auth Logic Location
 		const passport = require('passport');
 		const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-		app.use(
-			cookieSession({
-				// 1 day
-				maxAge: 24 * 60 * 60 * 1000,
-				keys: [process.env.COOKIE_SESSION_KEY],
-			}),
-		);
+		passport.serializeUser((user, done) => {
+			done(null, user.id);
+		});
 
-		app.use(passport.initialize());
-		app.use(passport.session());
-
-		const userRepository = getRepository(User);
+		passport.deserializeUser(async (id, done) => {
+			const user = await userRepository.findOne(id);
+			done(null, user);
+		});
 
 		passport.use(
 			new GoogleStrategy(
@@ -83,15 +64,17 @@ createConnection()
 			),
 		);
 
-		passport.serializeUser((user, done) => {
-			done(null, user.id);
-		});
+		app.use(
+			cookieSession({
+				// 1 day
+				maxAge: 24 * 60 * 60 * 1000,
+				keys: [process.env.SESSION_SECRET],
+			}),
+		);
+		app.use(passport.initialize());
+		app.use(passport.session());
 
-		passport.deserializeUser(async (id, done) => {
-			const user = await userRepository.findOne(id);
-			console.log(user);
-			done(null, user);
-		});
+		const userRepository = getRepository(User);
 
 		app.get(
 			'/auth/google/init',
@@ -104,11 +87,33 @@ createConnection()
 			'/auth/google/callback',
 			passport.authenticate('google'),
 			(req, res) => {
-				res.send(req.user);
-				res.send('you reached the redirect URI');
+				return res.redirect('http://localhost:3000/');
 			},
 		);
-		//
+
+		// register express routes from defined application routes
+		routes.forEach((route) => {
+			(app as any)[route.method](
+				route.route,
+				(req: Request, res: Response, next: Function) => {
+					const result = new (route.controller as any)()[
+						route.action
+					](req, res, next);
+					if (result instanceof Promise) {
+						result.then((result) =>
+							result !== null && result !== undefined
+								? res.send(result)
+								: undefined,
+						);
+					} else if (result !== null && result !== undefined) {
+						res.json(result);
+					}
+				},
+			);
+		});
+
+		// setup express app here
+		// ...
 
 		// start express server
 		const port = process.env.PORT || 8080;
