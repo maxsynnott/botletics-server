@@ -1,9 +1,14 @@
+import { config } from 'dotenv';
+config();
+
 import 'reflect-metadata';
-import { createConnection } from 'typeorm';
+import { createConnection, getRepository } from 'typeorm';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import { Request, Response } from 'express';
 import routes from './routes';
+import { ThirdPartyProvider, User } from './entity/User';
+const cookieSession = require('cookie-session');
 
 createConnection()
 	.then(async (connection) => {
@@ -35,27 +40,82 @@ createConnection()
 		// setup express app here
 		// ...
 
-		// start express server
-		app.listen(8080);
+		// Temp Auth Logic Location
+		const passport = require('passport');
+		const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-		// insert new users for test
-		// await connection.manager.save(
-		// 	connection.manager.create(User, {
-		// 		email: 'user1@example.com',
-		// 		thirdPartyId: '123',
-		// 		thirdPartyProvider: ThirdPartyProvider.GOOGLE,
-		// 	}),
-		// );
-		// await connection.manager.save(
-		// 	connection.manager.create(User, {
-		// 		email: 'user1@example.com',
-		// 		thirdPartyId: '124',
-		// 		thirdPartyProvider: ThirdPartyProvider.GOOGLE,
-		// 	}),
-		// );
+		app.use(
+			cookieSession({
+				// 1 day
+				maxAge: 24 * 60 * 60 * 1000,
+				keys: [process.env.COOKIE_SESSION_KEY],
+			}),
+		);
+
+		app.use(passport.initialize());
+		app.use(passport.session());
+
+		const userRepository = getRepository(User);
+
+		passport.use(
+			new GoogleStrategy(
+				{
+					clientID: process.env.GOOGLE_CLIENT_ID,
+					clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+					callbackURL: '/auth/google/callback',
+				},
+				async (accessToken, refreshToken, profile, done) => {
+					let user = await userRepository.findOne({
+						thirdPartyId: profile.id,
+						thirdPartyProvider: ThirdPartyProvider.GOOGLE,
+					});
+
+					if (!user) {
+						const newUser = new User();
+						newUser.thirdPartyId = profile.id;
+						newUser.thirdPartyProvider = ThirdPartyProvider.GOOGLE;
+						newUser.email = profile.emails[0].value;
+						user = await userRepository.save(newUser);
+					}
+
+					done(null, user);
+				},
+			),
+		);
+
+		passport.serializeUser((user, done) => {
+			done(null, user.id);
+		});
+
+		passport.deserializeUser(async (id, done) => {
+			const user = await userRepository.findOne(id);
+			console.log(user);
+			done(null, user);
+		});
+
+		app.get(
+			'/auth/google/init',
+			passport.authenticate('google', {
+				scope: ['profile', 'email'],
+			}),
+		);
+
+		app.get(
+			'/auth/google/callback',
+			passport.authenticate('google'),
+			(req, res) => {
+				res.send(req.user);
+				res.send('you reached the redirect URI');
+			},
+		);
+		//
+
+		// start express server
+		const port = process.env.PORT || 8080;
+		app.listen(port);
 
 		console.log(
-			'Express server has started on port 3000. Open http://localhost:3000/users to see results',
+			`Express server has started on port ${port}. Open http://localhost:${port}/users to see results`,
 		);
 	})
 	.catch((error) => console.log(error));

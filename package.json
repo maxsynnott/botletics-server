@@ -9,11 +9,16 @@
 		"typescript": "3.3.3333"
 	},
 	"dependencies": {
-		"typeorm": "0.2.31",
-		"reflect-metadata": "^0.1.10",
-		"pg": "^8.4.0",
+		"body-parser": "^1.18.1",
+		"cookie-session": "^1.4.0",
+		"cors": "^2.8.5",
+		"dotenv": "^8.2.0",
 		"express": "^4.15.4",
-		"body-parser": "^1.18.1"
+		"passport": "^0.4.1",
+		"passport-google-oauth20": "^2.0.0",
+		"pg": "^8.4.0",
+		"reflect-metadata": "^0.1.10",
+		"typeorm": "0.2.31"
 	},
 	"scripts": {
 		"start": "ts-node src/index.ts",
