@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Bot } from './Bot';
 
 export enum ThirdPartyProvider {
 	GOOGLE = 'google',
@@ -17,4 +18,7 @@ export class User {
 
 	@Column()
 	thirdPartyProvider: ThirdPartyProvider;
+
+	@OneToMany((type) => Bot, (bot) => bot.user)
+	bots: Bot[];
 }
