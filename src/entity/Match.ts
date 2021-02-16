@@ -7,7 +7,7 @@ export class Match {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToMany(() => Game, (game) => game.match)
+	@OneToMany(() => Game, (game) => game.match, { cascade: true })
 	games: Game[];
 
 	@ManyToMany(() => User, (user) => user.matches)
