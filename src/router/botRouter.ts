@@ -1,9 +1,9 @@
 import { BotController } from '../controller/BotController';
-import express from 'express';
-const router = express.Router();
+import { Router } from 'express';
 
 const controller = new BotController();
 
+const router = Router();
 router.get('/', controller.index);
 router.post('/', controller.create);
 

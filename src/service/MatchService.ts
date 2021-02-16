@@ -13,4 +13,8 @@ export class MatchService {
 
 		return this.matchRepository.save(match);
 	}
+
+	async findOne(id: number) {
+		return this.matchRepository.findOne(id, { relations: ['games'] });
+	}
 }

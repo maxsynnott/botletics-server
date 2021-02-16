@@ -9,12 +9,10 @@ import { initialize } from './initializer';
 
 createConnection()
 	.then(async () => {
-		// create express app
 		const app = express();
 
 		initialize(app);
 
-		// register express routes from defined application routes
 		app.use(router);
 
 		// start express server
