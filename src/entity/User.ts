@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	OneToMany,
+	ManyToMany,
+	JoinTable,
+} from 'typeorm';
 import { Bot } from './Bot';
+import { Match } from './Match';
 
 export enum ThirdPartyProvider {
 	GOOGLE = 'google',
@@ -19,6 +27,10 @@ export class User {
 	@Column()
 	thirdPartyProvider: ThirdPartyProvider;
 
-	@OneToMany((type) => Bot, (bot) => bot.user)
+	@OneToMany(() => Bot, (bot) => bot.user)
 	bots: Bot[];
+
+	@ManyToMany(() => Match, (match) => match.users)
+	@JoinTable()
+	matches: Match[];
 }
