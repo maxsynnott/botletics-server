@@ -1,19 +1,21 @@
 import { getRepository } from 'typeorm';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { BotService } from '../service/BotService';
 
 export class BotController {
-	async index(request: Request, response: Response, next: NextFunction) {
+	async index(req: Request, res: Response) {
 		const botService = new BotService();
 
 		const bots = await botService.findAll();
-		return bots;
+
+		res.json(bots);
 	}
 
-	async create(request: Request, response: Response, next: NextFunction) {
+	async create(req: Request, res: Response) {
 		const botService = new BotService();
 
-		const bot = botService.create(request.body);
-		return bot;
+		const bot = await botService.create(req.body);
+
+		res.json(bot);
 	}
 }

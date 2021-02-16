@@ -23,4 +23,15 @@ export class MatchController {
 
 		res.json(match);
 	}
+
+	async run(req: Request, res: Response) {
+		const { id } = req.params;
+		console.log('run', id);
+
+		const matchService = new MatchService();
+
+		const match = await matchService.runRound(Number(id));
+
+		res.json(match);
+	}
 }

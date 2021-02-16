@@ -12,7 +12,10 @@
 		"typescript": "3.3.3333"
 	},
 	"dependencies": {
+		"@types/chess.js": "^0.10.1",
+		"axios": "^0.21.1",
 		"body-parser": "^1.18.1",
+		"chess.js": "^0.11.0",
 		"cookie-parser": "^1.4.5",
 		"cookie-session": "^1.4.0",
 		"cors": "^2.8.5",
