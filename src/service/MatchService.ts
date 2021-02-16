@@ -5,7 +5,7 @@ import { Match } from '../entity/Match';
 export class MatchService {
 	private matchRepository = getRepository(Match);
 
-	async create(userId: string, numGames: number = 4) {
+	async create(userId: number, numGames: number = 4) {
 		const match = new Match();
 
 		const games = Array.from(Array(numGames), () => new Game());

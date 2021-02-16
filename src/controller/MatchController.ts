@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
+import { User } from '../entity/User';
 
 import { MatchService } from '../service/MatchService';
 
 export class MatchController {
-	private matchService = new MatchService();
+	async create(req: Request, res: Response, next: NextFunction) {
+		const user: Partial<User> = req.user;
 
-	async create(request: Request, response: Response, next: NextFunction) {
-		const match = await this.matchService.create(request.user.id);
-		return match;
+		const matchService = new MatchService();
+		const match = await matchService.create(user.id);
+
+		res.json(match);
 	}
 }

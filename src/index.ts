@@ -3,14 +3,16 @@ config();
 
 import 'reflect-metadata';
 import { createConnection, getRepository } from 'typeorm';
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
+import express from 'express';
+import bodyParser from 'body-parser';
 import { Request, Response } from 'express';
-import routes from './routes';
+import router from './routers';
 import { ThirdPartyProvider, User } from './entity/User';
-import * as cors from 'cors';
-const cookieSession = require('cookie-session');
-const cookieParser = require('cookie-parser');
+import cors from 'cors';
+import cookieSession from 'cookie-session';
+import cookieParser from 'cookie-parser';
+// import passport from 'passport';
+// import passportGoogleOAuth20 from 'passport-google-oauth20';
 
 createConnection()
 	.then(async (connection) => {
@@ -28,6 +30,8 @@ createConnection()
 		// Temp Auth Logic Location
 		const passport = require('passport');
 		const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+		const userRepository = getRepository(User);
 
 		passport.serializeUser((user, done) => {
 			done(null, user.id);
@@ -74,8 +78,6 @@ createConnection()
 		app.use(passport.initialize());
 		app.use(passport.session());
 
-		const userRepository = getRepository(User);
-
 		app.get(
 			'/auth/google/init',
 			passport.authenticate('google', {
@@ -92,25 +94,7 @@ createConnection()
 		);
 
 		// register express routes from defined application routes
-		routes.forEach((route) => {
-			(app as any)[route.method](
-				route.route,
-				(req: Request, res: Response, next: Function) => {
-					const result = new (route.controller as any)()[
-						route.action
-					](req, res, next);
-					if (result instanceof Promise) {
-						result.then((result) =>
-							result !== null && result !== undefined
-								? res.send(result)
-								: undefined,
-						);
-					} else if (result !== null && result !== undefined) {
-						res.json(result);
-					}
-				},
-			);
-		});
+		app.use(router);
 
 		// setup express app here
 		// ...
