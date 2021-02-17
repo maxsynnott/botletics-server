@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
-import { Game } from '../entity/Game';
-import { Match } from '../entity/Match';
+import { Game } from '../entities/Game';
+import { Match } from '../entities/Match';
 import { ChessService } from './ChessService';
 
 export class MatchService {

@@ -1,4 +1,4 @@
-import { MatchController } from '../controller/MatchController';
+import { MatchController } from '../controllers/MatchController';
 import { Router } from 'express';
 
 const controller = new MatchController();

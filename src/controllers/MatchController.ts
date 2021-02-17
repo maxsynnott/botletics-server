@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { User } from '../entity/User';
+import { User } from '../entities/User';
 
-import { MatchService } from '../service/MatchService';
+import { MatchService } from '../services/MatchService';
 
 export class MatchController {
 	async index(req: Request, res: Response) {

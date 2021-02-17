@@ -1,4 +1,4 @@
-import { BotController } from '../controller/BotController';
+import { BotController } from '../controllers/BotController';
 import { Router } from 'express';
 
 const controller = new BotController();

@@ -4,8 +4,8 @@ config();
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import express from 'express';
-import { router } from './router';
-import { initialize } from './initializer';
+import { router } from './routers';
+import { initialize } from './initializers';
 import { createServer } from 'http';
 import { Server as SocketsServer, Socket } from 'socket.io';
 

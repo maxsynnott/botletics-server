@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
-import { BotService } from '../service/BotService';
+import { BotService } from '../services/BotService';
 
 export class BotController {
 	async index(req: Request, res: Response) {

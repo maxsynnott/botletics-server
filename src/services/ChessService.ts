@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Match } from '../entity/Match';
+import { Match } from '../entities/Match';
 import { Chess } from 'chess.js';
 
 export class ChessService {

@@ -1,5 +1,5 @@
 import { getRepository } from 'typeorm';
-import { Bot } from '../entity/Bot';
+import { Bot } from '../entities/Bot';
 
 export class BotService {
 	private botRepository = getRepository(Bot);
