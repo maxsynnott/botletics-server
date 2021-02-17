@@ -4,6 +4,14 @@ import { User } from '../entity/User';
 import { MatchService } from '../service/MatchService';
 
 export class MatchController {
+	async index(req: Request, res: Response) {
+		const matchService = new MatchService();
+
+		const matches = await matchService.findAll();
+
+		res.json(matches);
+	}
+
 	async create(req: Request, res: Response) {
 		const user: Partial<User> = req.user;
 
@@ -26,7 +34,6 @@ export class MatchController {
 
 	async run(req: Request, res: Response) {
 		const { id } = req.params;
-		console.log('run', id);
 
 		const matchService = new MatchService();
 

@@ -6,7 +6,7 @@ import { ChessService } from './ChessService';
 export class MatchService {
 	private matchRepository = getRepository(Match);
 
-	async create(userId: number, numGames: number = 4) {
+	async create(userId: number, numGames: number = 9) {
 		const match = new Match();
 
 		const games = Array.from(Array(numGames), () => new Game());
@@ -17,6 +17,10 @@ export class MatchService {
 
 	async findOne(id: number) {
 		return this.matchRepository.findOne(id, { relations: ['games'] });
+	}
+
+	async findAll() {
+		return this.matchRepository.find();
 	}
 
 	async runRound(id: number) {
