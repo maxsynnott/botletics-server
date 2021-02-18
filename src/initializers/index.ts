@@ -1,9 +1,17 @@
+import { Application } from 'express';
+import { Server } from 'http';
 import { initMiddleware } from './middlewareInitializer';
 import { initPassport } from './passportInitializer';
+import { initSocketIo } from './socketIoInitializer';
 
-export const initialize = (app) => {
+interface initializeArguments {
+	app: Application;
+	httpServer: Server;
+}
+
+export const initialize = (context: initializeArguments) => {
 	// Order is important
-	const initFunctions = [initMiddleware, initPassport];
+	const initFunctions = [initMiddleware, initPassport, initSocketIo];
 
-	initFunctions.forEach((initFunction) => initFunction(app));
+	initFunctions.forEach((initFunction) => initFunction(context));
 };

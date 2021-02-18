@@ -7,26 +7,13 @@ import express from 'express';
 import { router } from './routers';
 import { initialize } from './initializers';
 import { createServer } from 'http';
-import { Server as SocketsServer, Socket } from 'socket.io';
 
 createConnection()
 	.then(async () => {
 		const app = express();
 		const httpServer = createServer(app);
 
-		const io = new SocketsServer(httpServer, {
-			cors: {
-				origin: 'http://localhost:3000',
-			},
-		});
-
-		io.on('connection', (socket: Socket) => {
-			console.log('User Connected');
-
-			socket.emit('from-server', 'Hello Client :)');
-		});
-
-		initialize(app);
+		initialize({ app, httpServer });
 
 		app.use(router);
 

@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import { ThirdPartyProvider, User } from '../entities/User';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
-export const initPassport = (app) => {
+export const initPassport = ({ app }) => {
 	const userRepository = getRepository(User);
 
 	passport.serializeUser((user: Partial<User>, done) => {

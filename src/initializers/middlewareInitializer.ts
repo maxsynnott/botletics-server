@@ -3,7 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
 
-export const initMiddleware = (app) => {
+export const initMiddleware = ({ app }) => {
 	app.use(bodyParser.json());
 
 	app.use(
