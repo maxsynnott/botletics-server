@@ -17,7 +17,7 @@ export class MatchController {
 
 		const matchService = new MatchService();
 
-		const match = await matchService.create(user.id);
+		const match = await matchService.create(user.id, 9);
 
 		res.json(match);
 	}
@@ -37,8 +37,8 @@ export class MatchController {
 
 		const matchService = new MatchService();
 
-		const match = await matchService.runRound(Number(id));
+		matchService.run(Number(id));
 
-		res.json(match);
+		res.json({ running: true });
 	}
 }

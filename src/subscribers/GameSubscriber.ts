@@ -13,6 +13,6 @@ export class GameSubscriber implements EntitySubscriberInterface<Game> {
 	}
 
 	afterUpdate(event: UpdateEvent<Game>) {
-		io.sockets.emit('games/' + event.entity.id, event.entity);
+		io.sockets.emit('games', event.entity);
 	}
 }
